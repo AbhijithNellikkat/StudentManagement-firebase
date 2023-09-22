@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_management_app_firebase/features/add_student/ui/screens/add_student_screen.dart';
+import 'package:student_management_app_firebase/features/authentication/ui/screens/login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -11,6 +13,23 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
+                    (route) => false
+                    ,
+                  );
+                },
+                icon: const Icon(Icons.login))
+          ],
+        ),
         body: StreamBuilder<QuerySnapshot>(
             stream: _reference.orderBy('rollNumber').snapshots(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -34,17 +53,34 @@ class HomeScreen extends StatelessWidget {
                         //Get the item at this index
                         Map thisItem = items[index];
                         //REturn the widget for the list items
-                        return ListTile(
-                          leading: Container(
-                            height: 80,
-                            width: 80,
-                            child: thisItem.containsKey('image')
-                                ? Image.network('${thisItem['image']}')
-                                : Container(),
+                        return InkWell(
+                          onTap: () {
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) =>
+                            //           StudentDetailsScreen(),
+                            //     ));
+                          },
+                          child: Card(
+                            child: ListTile(
+                              leading: SizedBox(
+                                height: 80,
+                                width: 80,
+                                child: thisItem.containsKey('image')
+                                    ? Image.network('${thisItem['image']}')
+                                    : Container(),
+                              ),
+                              title: Text('${thisItem['name']}'),
+                              subtitle: Text('${thisItem['rollNumber']}'),
+                              trailing: IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.delete_forever,
+                                    color: Colors.red,
+                                  )),
+                            ),
                           ),
-                          title: Text('${thisItem['name']}'),
-                          
-                          subtitle: Text('${thisItem['rollNumber']}'),
                         );
                       }),
                 );
