@@ -12,6 +12,7 @@ class AddStudentScreen extends StatelessWidget {
 
   final TextEditingController _controllerName = TextEditingController();
   final TextEditingController _controllerAge = TextEditingController();
+  final TextEditingController _controllerRollNumber = TextEditingController();
 
   GlobalKey<FormState> formkey = GlobalKey();
 
@@ -48,6 +49,17 @@ class AddStudentScreen extends StatelessWidget {
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the age';
+                  }
+
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _controllerRollNumber,
+                decoration: const InputDecoration(hintText: 'Enter the rollNumber'),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the rollNumber';
                   }
 
                   return null;
@@ -92,7 +104,9 @@ class AddStudentScreen extends StatelessWidget {
                   if (formkey.currentState!.validate()) {
                     String studentName = _controllerName.text;
                     String studentAge = _controllerAge.text;
+                    String studentRollNumber = _controllerRollNumber.text;
                     Map<String, String> dataTosend = {
+                      'rollNumber':studentRollNumber,
                       'name': studentName,
                       'age': studentAge,
                       'image':imageUrl,
